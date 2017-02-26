@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<title>Modifying page content using DOM</title>
+	</head>
+
+	<body onLoad="initForm()" style="text-align:center">
+
+		<form action="javascript:void(1)" id="mainForm">
+			<textarea rows="10" cols="40" name="text"></textarea><br>
+			<input type="radio" name="node" id="add">Add node</input>
+			<input type="radio" name="node" id="delete">Delete node</input>
+			<input type="radio" name="node" id="insert-after">Insert after node</input>
+			<input type="radio" name="node" id="replace">Replace node</input><br>
+			Paragraph #: <select id="mySelect" size=""></select>
+			<input type="submit" name="submit"> 
+		</form>
+
+		<div id="view-updates"></div>
+
+		<script type="text/javascript">
+
+			var mySelect = document.getElementById('mySelect');
+
+			function initForm() {
+				var form = document.forms["mainForm"];
+				form.submit.onclick = submit;
+			}
+
+			function submit() {
+				var a = document.getElementById('add');
+				var d = document.getElementById('delete');
+				var ia = document.getElementById('insert-after');
+				var r = document.getElementById('replace');
+
+				var parNum = mySelect.selectedIndex;	
+
+				if(a.checked || d.checked || ia.checked || r.checked) {
+					if(a.checked) 	addNode(); 
+					if(d.checked) 	deleteNode(parNum);
+					if(ia.checked) 	insertAfterNode(parNum);
+					if(r.checked) 	replaceNode(parNum);
+				}
+				else { alert('Please select an option'); }
+			}
+
+			function addNode() {
+				var form = document.forms["mainForm"];
+				var div = document.getElementById('view-updates');
+				var input = form.text.value;
+				var text = document.createTextNode(input);
+				var par = document.createElement('p');
+				par.appendChild(text);
+				var option = document.createElement("option");
+				if(form.text.value.length != 0 ) {
+					div.appendChild(par);
+					option.value = input.value;
+					option.text = mySelect.length + 1;
+					mySelect.options.add(option);
+				}
+				else { alert('Please type something in the text area'); }
+			}
+
+			function deleteNode(i) {
+				var parent = document.getElementById('view-updates');
+				var a = document.getElementsByTagName('p')[i];
+				if(mySelect.length > 0 ) {
+				parent.removeChild(a);	
+				mySelect.remove(mySelect.length-1);
+				}
+				else { alert('There is nothing to delete'); }			
+			}
+
+			function insertAfterNode(i) {
+				var form = document.forms["mainForm"];
+				var par = document.createElement('p');
+				var parent = document.getElementsByTagName('p')[i];
+				if(form.text.value.length != 0 ) {
+					var input = form.text.value;
+					var text = document.createTextNode(input);
+					par.appendChild(text);
+					parent.parentNode.insertBefore(par, parent.nextSibling);
+					var option = document.createElement("option");
+					option.value = input.value;
+					option.text = mySelect.length + 1;
+					mySelect.options.add(option);
+				}
+				else { alert('Please type something in the text area'); }
+			}
+
+			function replaceNode(i) {
+				var form = document.forms["mainForm"];
+				var div = document.getElementById('view-updates');
+				var oldP = document.getElementsByTagName('p')[i];
+				var par = document.createElement('p');
+				if(form.text.value.length != 0 ) {
+					var newP = form.text.value;
+					var textNode = document.createTextNode(newP);
+					par.appendChild(textNode);
+					div.replaceChild(par, oldP);
+				}
+				else { alert('Please type something in the text area'); }
+			}
+
+		</script>
+
+	</body>
+
+</html>
